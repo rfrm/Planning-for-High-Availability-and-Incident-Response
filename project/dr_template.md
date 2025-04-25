@@ -1,14 +1,16 @@
 # Infrastructure
 
 ## AWS Zones
-Identify your zones here
+* us-east-2
+* us-west-1
 
 ## Servers and Clusters
 
 ### Table 1.1 Summary
 | Asset      | Purpose           | Size                                                                   | Qty                                                             | DR                                                                                                           |
-|------------|-------------------|------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| Asset name | Brief description | AWS size eg. t3.micro (if applicable, not all assets will have a size) | Number of nodes/replicas or just how many of a particular asset | Identify if this asset is deployed to DR, replicated, created in multiple locations or just stored elsewhere |
+|--------------|-------------------|------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| ec2 instance | Serves the example api| t3.micro | 1 | yes this resource is also replicated in zone 2 |
+| aws_rds_cluster | MySQL database | db.t3.medium | 1 | yes this resource is also present in zone 2 as rds-s(econdary) |
 
 ### Descriptions
 More detailed descriptions of each asset identified above.
