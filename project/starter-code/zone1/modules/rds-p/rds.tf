@@ -20,6 +20,13 @@ resource "aws_db_subnet_group" "udacity_db_subnet_group" {
   subnet_ids = var.private_subnet_ids
 
 }
+
+resource "aws_rds_global_cluster" "global" {
+  global_cluster_identifier = "udacity-global-cluster"
+  engine                    = "aurora-mysql"
+  engine_version            = "8.0.mysql_aurora.3.08.0"
+}
+
 resource "aws_rds_cluster" "udacity_cluster" {
   cluster_identifier              = "udacity-db-cluster"
   availability_zones              = ["us-east-2a", "us-east-2b"]
@@ -36,7 +43,15 @@ resource "aws_rds_cluster" "udacity_cluster" {
   storage_encrypted               = false
   depends_on                      = [aws_rds_cluster_parameter_group.cluster_pg]
   backup_retention_period         = 5
+  global_cluster_identifier       = aws_rds_global_cluster.global.id
 
+  lifecycle {
+    ignore_changes = [
+      availability_zones,
+      deletion_protection,
+      tags,
+    ]
+  }
 }
 
 output "db_cluster_arn" {
@@ -47,11 +62,15 @@ output "db_instance_arn" {
   value = aws_rds_cluster_instance.udacity_instance[0].arn
 }
 
+output "global_cluster_id" {
+  value = aws_rds_global_cluster.global.id
+}
+
 resource "aws_rds_cluster_instance" "udacity_instance" {
   count                = 2
   identifier           = "udacity-db-instance-${count.index}"
   cluster_identifier   = aws_rds_cluster.udacity_cluster.id
-  instance_class       = "db.t3.medium" # Update this line
+  instance_class       = "db.r5.large" # Update this line
   db_subnet_group_name = aws_db_subnet_group.udacity_db_subnet_group.name
   engine               = "aurora-mysql" # Add this line
 }
