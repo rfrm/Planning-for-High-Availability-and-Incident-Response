@@ -13,7 +13,7 @@
 | aws_rds_cluster | MySQL database | db.t3.medium | 3 | yes this resource is also present in zone 2 as rds-s(econdary) |
 | eks cluster | Kubernetes Cluster | t3.medium | 2 | yes also replicated in zone 2
 | vpc | Virtual private cloud | 1 | Its replicated in diferent availability zones
-| alb | Application load balancer | 1 | it lives in only one availability zone but connects to resources in different zones
+| alb | Application load balancer | 1 | Yes there's a load balancer in both zone1 and zone2
 
 
 ### Descriptions
