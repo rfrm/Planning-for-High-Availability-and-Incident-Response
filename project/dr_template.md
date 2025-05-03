@@ -9,15 +9,29 @@
 ### Table 1.1 Summary
 | Asset      | Purpose           | Size                                                                   | Qty                                                             | DR                                                                                                           |
 |--------------|-------------------|------------------------------------------------------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| ec2 instance | Serves the example api| t3.micro | 1 | yes this resource is also replicated in zone 2 |
-| aws_rds_cluster | MySQL database | db.t3.medium | 1 | yes this resource is also present in zone 2 as rds-s(econdary) |
+| ec2 instance | Serves the example api| t3.micro | 3 | yes this resource is also replicated in zone 2 |
+| aws_rds_cluster | MySQL database | db.t3.medium | 3 | yes this resource is also present in zone 2 as rds-s(econdary) |
+| eks cluster | Kubernetes Cluster | t3.medium | 2 | yes also replicated in zone 2
+| vpc | Virtual private cloud | 1 | Its replicated in diferent availability zones
+| alb | Application load balancer | 1 | it lives in only one availability zone but connects to resources in different zones
+
 
 ### Descriptions
-More detailed descriptions of each asset identified above.
+ec2 instances: Run the events API
+RDS cluster is a managed MySQL database
+EKS cluster is used to host the monitoring tools grafana and prometheus in this setup
+VPC is used to isolate aws resources, to allow communication between the EKS and the ec2 instances.
+ALB is used to send traffic to ec2 instances in zone1 and zone2
 
 ## DR Plan
 ### Pre-Steps:
-List steps you would perform to setup the infrastructure in the other region. It doesn't have to be super detailed, but high-level should suffice.
+We would have to run `terraform apply` inside the `zone2` directory.
+I have set up an RDS global cluster, with a primary in zone1 and a follower in zone2
 
 ## Steps:
-You won't actually perform these steps, but write out what you would do to "fail-over" your application and database cluster to the other region. Think about all the pieces that were setup and how you would use those in the other region
+To perform the failover, we would have to:
+
+1. Detach the secondary from the global cluster.
+2. Promote the secondary to standalone and enable writes.
+3. Update the applications database URL to the new primary.
+
